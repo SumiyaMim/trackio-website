@@ -37,7 +37,7 @@ const Report = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
-          <button className="mt-6 bg-[#406EA2] text-white px-4 py-2 rounded-md">
+          <button className="mt-6 bg-[#406EA2] text-white px-4 py-2 rounded-md hover:bg-[#366294]">
             GO
           </button>
         </div>
