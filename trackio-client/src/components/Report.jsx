@@ -13,10 +13,10 @@ const Report = () => {
   const totalExpense = expenses.reduce((total, expense) => total + expense.amount, 0);
 
   return (
-    <div className="bg-gray-50 min-h-screen flex justify-center items-center py-28">
-      <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-16">
+    <div className="bg-gray-50 flex justify-center items-center py-28">
+      <div className="md:w-full max-w-2xl lg:max-w-4xl bg-white shadow-md rounded-lg px-10 py-10 lg:p-16">
         <h1 className="text-xl font-bold text-[#406EA2] mb-8">Expenditure Report:</h1>
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
           <div>
             <label htmlFor="from" className="block text-sm font-medium text-gray-600">
               From
