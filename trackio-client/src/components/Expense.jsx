@@ -102,8 +102,8 @@ const Expense = () => {
               </label>
           </div>
           <div className="flex items-center justify-between">
-            <button className="bg-[#406EA2] text-white text-base font-semibold px-5 py-2 rounded">Submit</button>
-            <button className="bg-[#ececec] text-base font-semibold px-5 py-2 rounded">Cancel</button>
+            <button className="bg-[#406EA2] text-white text-base font-semibold px-5 py-2 rounded hover:bg-[#366294]">Submit</button>
+            <button className="bg-[#ececec] text-base font-semibold px-5 py-2 rounded hover:bg-[#e5e5e5]">Cancel</button>
           </div>
         </div>
       </div>
