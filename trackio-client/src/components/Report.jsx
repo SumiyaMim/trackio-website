@@ -1,15 +1,71 @@
+import { useState } from "react";
 
 const expenses = [
-  { date: "02/05/2023", amount: 250 },
-  { date: "03/05/2023", amount: 850 },
-  { date: "04/05/2023", amount: 200 },
-  { date: "05/05/2023", amount: 700 },
-  { date: "06/05/2023", amount: 1400 },
-  { date: "07/05/2023", amount: 150 },
-  { date: "08/05/2023", amount: 550 },
+  {
+    date: "02/05/2023",
+    amount: 250,
+    details: [
+      { category: "Eating Out", itemName: "Lunch", cost: 150 },
+      { category: "Commute", itemName: "Bus Fare", cost: 100 },
+    ],
+  },
+  {
+    date: "03/05/2023",
+    amount: 850,
+    details: [
+      { category: "Groceries", itemName: "Vegetables", cost: 400 },
+      { category: "Health Care", itemName: "Medicine", cost: 450 },
+    ],
+  },
+  {
+    date: "04/05/2023",
+    amount: 200,
+    details: [
+      { category: "Eating Out", itemName: "Chips", cost: 100 },
+      { category: "Eating Out", itemName: "Juice", cost: 100 },
+    ],
+  },
+  {
+    date: "05/05/2023",
+    amount: 700,
+    details: [
+      { category: "Utilities", itemName: "Electricity Bill", cost: 700 },
+    ],
+  },
+  {
+    date: "06/05/2023",
+    amount: 1400,
+    details: [
+      { category: "Utilities", itemName: "Apartment Rent", cost: 1400 },
+    ],
+  },
+  {
+    date: "07/05/2023",
+    amount: 150,
+    details: [
+      { category: "Eating Out", itemName: "Breakfast", cost: 150 },
+    ],
+  },
+  {
+    date: "08/05/2023",
+    amount: 550,
+    details: [
+      { category: "Shopping", itemName: "Clothes", cost: 550 },
+    ],
+  },
 ];
 
 const Report = () => {
+  
+  const [expanded, setExpanded] = useState({});
+
+  const toggleExpand = (index) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
   const totalExpense = expenses.reduce((total, expense) => total + expense.amount, 0);
 
   return (
@@ -45,10 +101,60 @@ const Report = () => {
           {expenses.map((expense, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-[#e9f4ff] text-[#406EA2] px-5 py-3 rounded-md shadow-sm"
+              className="border border-[#406EA2] rounded-md p-4 shadow-sm"
             >
-              <span>Total Expense of {expense.date}</span>
-              <span>{expense.amount} Tk</span>
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() => toggleExpand(index)}
+              >
+                <span>Total Expense of {expense.date}</span>
+                <span className="font-semibold text-[#406EA2]">
+                  {expense.amount} Tk
+                  <span className="ml-2">
+                    {expanded[index] ? "▲" : "▼"}
+                  </span>
+                </span>
+              </div>
+              {expanded[index] && (
+                <div className="mt-4 bg-[hsl(212,76%,95%)] rounded-md p-4">
+                  <h3 className="text-center font-semibold text-[#406EA2] mb-2">
+                    Expense List
+                  </h3>
+                  <table className="w-full text-sm text-left text-[#406EA2]">
+                    <thead className="bg-[rgb(173,206,242)]">
+                      <tr>
+                        <th className="px-4 py-2">Category</th>
+                        <th className="px-4 py-2">Item Name</th>
+                        <th className="px-4 py-2">Cost</th>
+                        <th className="px-4 py-2">Update</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expense.details.map((detail, i) => (
+                        <tr key={i} className="border-b">
+                          <td className="px-4 py-2">{detail.category}</td>
+                          <td className="px-4 py-2">{detail.itemName}</td>
+                          <td className="px-4 py-2">{detail.cost} Tk</td>
+                          <td className="px-4 py-2">
+                            <button
+                              className="text-green-600 hover:underline"
+                            >
+                              Edit
+                            </button>{" "}
+                            |{" "}
+                            <button
+                              className="text-red-600 hover:underline"
+                            >
+                              Delete
+                            </button>
+                          </td>
+
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           ))}
         </div>

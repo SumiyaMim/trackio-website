@@ -62,6 +62,7 @@ const Expense = () => {
               <option value="Travel">Travel</option>
               <option value="Utilities">Utilities</option>
               <option value="Education">Education</option>
+              <option value="Shopping">Shopping</option>
               <option value="Subscriptions">Subscriptions</option>
             </select>
             <label
