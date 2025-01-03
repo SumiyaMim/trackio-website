@@ -17,7 +17,7 @@ const Expense = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto py-20 px-5 md:px-10">
+    <div className="max-w-7xl mx-auto py-28 px-5 md:px-10">
       <div className="flex flex-col lg:flex-row items-center gap-20">
         <div className="w-full lg:w-1/2">
           <h2 className="font-bold text-4xl md:text-5xl mb-4 text-[#4a4a4a]">Manage Tracking</h2>
