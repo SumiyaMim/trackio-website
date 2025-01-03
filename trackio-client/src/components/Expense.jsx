@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const expense = () => {
+const Expense = () => {
     
   const [currentDateTime, setCurrentDateTime] = useState('');
 
@@ -30,7 +30,7 @@ const expense = () => {
         </div>
         {/* Input Section */}
         <div className="w-full lg:w-1/2 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] p-10 md:p-16 lg:p-14 rounded-md">
-          <h4 className="text-center text-xl font-semibold mb-14 text-[#406EA2]">Expense Record</h4>
+          <h4 className="text-center text-xl font-bold mb-14 text-[#406EA2]">Expense Record</h4>
           <div className="relative z-10 mb-8">
               <input
               id="title"
@@ -111,4 +111,4 @@ const expense = () => {
   );
 };
 
-export default expense;
+export default Expense;

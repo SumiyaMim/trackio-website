@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar"
 import Expense from "./components/Expense"
+import Report from "./components/Report"
 
 function App() {
 
@@ -7,6 +8,7 @@ function App() {
     <>
       <Navbar/>
       <Expense/>
+      <Report/>
     </>
   )
 }
