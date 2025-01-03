@@ -70,7 +70,7 @@ const Report = () => {
 
   return (
     <div className="bg-gray-50 flex justify-center items-center py-28">
-      <div className="md:w-full max-w-2xl lg:max-w-4xl bg-white shadow-md rounded-lg px-10 py-10 lg:p-16">
+      <div className="md:w-full max-w-2xl lg:max-w-4xl bg-white shadow-md rounded-lg px-8 md:px-10 py-10 lg:p-16">
         <h1 className="text-xl font-bold text-[#406EA2] mb-8">Expenditure Report:</h1>
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
           <div>
@@ -120,8 +120,8 @@ const Report = () => {
                   <h3 className="text-center font-semibold text-[#406EA2] mb-2">
                     Expense List
                   </h3>
-                  <table className="w-full text-sm text-left text-[#406EA2]">
-                    <thead className="bg-[rgb(173,206,242)]">
+                  <table className="w-full text-left text-[#406EA2]">
+                    <thead className="bg-[rgb(173,206,242)] text-xs md:text-sm">
                       <tr>
                         <th className="px-4 py-2">Category</th>
                         <th className="px-4 py-2">Item Name</th>
@@ -131,7 +131,7 @@ const Report = () => {
                     </thead>
                     <tbody>
                       {expense.details.map((detail, i) => (
-                        <tr key={i} className="border-b">
+                        <tr key={i} className="border-b text-xs md:text-sm">
                           <td className="px-4 py-2">{detail.category}</td>
                           <td className="px-4 py-2">{detail.itemName}</td>
                           <td className="px-4 py-2">{detail.cost} Tk</td>
