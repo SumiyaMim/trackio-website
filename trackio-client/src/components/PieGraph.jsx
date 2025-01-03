@@ -47,7 +47,7 @@ const PieGraph = () => {
 
 
   return (
-    <div className="py-28 w-full max-w-4xl mx-auto px-[15px] md:px-12 lg:px-0">
+    <div className="py-28 w-full max-w-4xl mx-auto px-7 md:px-12 lg:px-0">
       <h1 className="text-xl font-bold text-[#406EA2] mb-8">Expenditures per Category:</h1>
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
         <div>
