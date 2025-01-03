@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 const PieGraph = () => {
-  // Data for the chart
   const data = [
     { name: "Utilities", value: 240 },
     { name: "Groceries", value: 89 },
@@ -13,23 +12,44 @@ const PieGraph = () => {
 
   const COLORS = ["#036666", "#4CAF50", "#FFD700", "#FF5733", "#A4D96C"];
 
-  // State for date range
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [chartSize, setChartSize] = useState({
+    width: 600,
+    height: 600,
+    innerRadius: 80,
+    outerRadius: 180,
+  });
 
   const handleFilter = () => {
-    // Handle filtering logic if necessary
     console.log("Filtering data from:", startDate, "to:", endDate);
   };
 
-  return (
-    <div className="flex flex-col items-start py-28 w-full max-w-4xl mx-auto px-5 md:px-12 lg:px-0">
-      <div>
-        {/* Header */}
-        <h1 className="text-xl font-bold text-[#406EA2] mb-8">Expenditures per Category:</h1>
+  useEffect(() => {
+    const updateSize = () => {
+      if (window.innerWidth < 640) {
+        // Small screen
+        setChartSize({ width: 300, height: 400, innerRadius: 60, outerRadius: 150 });
+      } else if (window.innerWidth < 1024) {
+        // Medium screen
+        setChartSize({ width: 600, height: 600, innerRadius: 80, outerRadius: 180 });
+      } else {
+        // Large screen
+        setChartSize({ width: 600, height: 600, innerRadius: 80, outerRadius: 180 });
+      }
+    };
 
-        {/* Date Range Picker */}
-        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+    // Add resize listener
+    window.addEventListener("resize", updateSize);
+    updateSize(); // Initial check
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+
+  return (
+    <div className="py-28 w-full max-w-4xl mx-auto px-[15px] md:px-12 lg:px-0">
+      <h1 className="text-xl font-bold text-[#406EA2] mb-8">Expenditures per Category:</h1>
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
         <div>
             <label htmlFor="from" className="block text-sm font-medium text-gray-600">
             From
@@ -60,29 +80,49 @@ const PieGraph = () => {
         >
             GO
         </button>
-        </div>
+      </div>
 
-        {/* Pie Chart */}
+      {/* Pie Chart */}
+      <div className="flex flex-col items-center">
         <div className="flex items-center justify-center relative">
-        <div className="absolute text-center">
-            <h3 className="text-base font-semibold text-gray-500">Spent per Category</h3>
+          <div className="absolute text-center">
+            <h3 className="text-xs md:text-base font-semibold text-gray-500">Spent per Category</h3>
           </div>
-          <PieChart width={400} height={400}>
-              <Pie
+          <PieChart width={chartSize.width} height={chartSize.height}>
+          <Pie
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={80}
-              outerRadius={140}
+              innerRadius={chartSize.innerRadius}
+              outerRadius={chartSize.outerRadius}
               fill="#8884d8"
               dataKey="value"
-              label={({ name, value }) => `${name}: $${value}`}
-              >
+              label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+                const RADIAN = Math.PI / 180;
+                const radius = innerRadius + (outerRadius - innerRadius) / 2;
+                const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                return (
+                  <text
+                    x={x}
+                    y={y}
+                    fill="white"
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize="12"
+                    fontWeight="bold"
+                  >
+                    {`${data[index].name}: $${data[index].value}`}
+                  </text>
+                );
+              }}
+            >
               {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
-              </Pie>
-              <Tooltip />
+            </Pie>
+            <Tooltip />
           </PieChart>
         </div>
       </div>
