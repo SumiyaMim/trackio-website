@@ -89,7 +89,7 @@ const PieGraph = () => {
             <h3 className="text-xs md:text-base font-semibold text-gray-500">Spent per Category</h3>
           </div>
           <PieChart width={chartSize.width} height={chartSize.height}>
-          <Pie
+            <Pie
               data={data}
               cx="50%"
               cy="50%"
@@ -97,6 +97,7 @@ const PieGraph = () => {
               outerRadius={chartSize.outerRadius}
               fill="#8884d8"
               dataKey="value"
+              labelLine={false}
               label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
                 const RADIAN = Math.PI / 180;
                 const radius = innerRadius + (outerRadius - innerRadius) / 2;
@@ -121,7 +122,7 @@ const PieGraph = () => {
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
-            </Pie>
+            </Pie>  
             <Tooltip />
           </PieChart>
         </div>
