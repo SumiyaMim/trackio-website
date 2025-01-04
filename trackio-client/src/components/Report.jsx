@@ -4,53 +4,53 @@ const expenses = [
   {
     date: "02/05/2023",
     amount: 250,
-    details: [
-      { category: "Eating Out", itemName: "Lunch", cost: 150 },
-      { category: "Commute", itemName: "Bus Fare", cost: 100 },
+    list: [
+      { category: "Eating Out", title: "Lunch", cost: 150 },
+      { category: "Commute", title: "Bus Fare", cost: 100 },
     ],
   },
   {
     date: "03/05/2023",
     amount: 850,
-    details: [
-      { category: "Groceries", itemName: "Vegetables", cost: 400 },
-      { category: "Health Care", itemName: "Medicine", cost: 450 },
+    list: [
+      { category: "Groceries", title: "Vegetables", cost: 400 },
+      { category: "Health Care", title: "Medicine", cost: 450 },
     ],
   },
   {
     date: "04/05/2023",
     amount: 200,
-    details: [
-      { category: "Eating Out", itemName: "Chips", cost: 100 },
-      { category: "Eating Out", itemName: "Juice", cost: 100 },
+    list: [
+      { category: "Eating Out", title: "Chips", cost: 100 },
+      { category: "Eating Out", title: "Juice", cost: 100 },
     ],
   },
   {
     date: "05/05/2023",
     amount: 700,
-    details: [
-      { category: "Utilities", itemName: "Electricity Bill", cost: 700 },
+    list: [
+      { category: "Utilities", title: "Electricity Bill", cost: 700 },
     ],
   },
   {
     date: "06/05/2023",
     amount: 1400,
-    details: [
-      { category: "Utilities", itemName: "Apartment Rent", cost: 1400 },
+    list: [
+      { category: "Utilities", title: "Apartment Rent", cost: 1400 },
     ],
   },
   {
     date: "07/05/2023",
     amount: 150,
-    details: [
-      { category: "Eating Out", itemName: "Breakfast", cost: 150 },
+    list: [
+      { category: "Eating Out", title: "Breakfast", cost: 150 },
     ],
   },
   {
     date: "08/05/2023",
     amount: 550,
-    details: [
-      { category: "Shopping", itemName: "Clothes", cost: 550 },
+    list: [
+      { category: "Shopping", title: "Clothes", cost: 550 },
     ],
   },
 ];
@@ -130,10 +130,10 @@ const Report = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {expense.details.map((detail, i) => (
+                      {expense.list.map((detail, i) => (
                         <tr key={i} className="border-b text-xs md:text-sm">
                           <td className="px-4 py-2">{detail.category}</td>
-                          <td className="px-4 py-2">{detail.itemName}</td>
+                          <td className="px-4 py-2">{detail.title}</td>
                           <td className="px-4 py-2">{detail.cost} Tk</td>
                           <td className="px-4 py-2">
                             <button
