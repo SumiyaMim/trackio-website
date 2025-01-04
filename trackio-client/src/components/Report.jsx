@@ -3,60 +3,59 @@ import { useState } from "react";
 const expenses = [
   {
     date: "02/05/2023",
-    amount: 250,
+    totalAmount: 250,
     list: [
-      { category: "Eating Out", title: "Lunch", cost: 150 },
-      { category: "Commute", title: "Bus Fare", cost: 100 },
+      { category: "Eating Out", title: "Lunch", amount: 150 },
+      { category: "Commute", title: "Bus Fare", amount: 100 },
     ],
   },
   {
     date: "03/05/2023",
-    amount: 850,
+    totalAmount: 850,
     list: [
-      { category: "Groceries", title: "Vegetables", cost: 400 },
-      { category: "Health Care", title: "Medicine", cost: 450 },
+      { category: "Groceries", title: "Vegetables", amount: 400 },
+      { category: "Health Care", title: "Medicine", amount: 450 },
     ],
   },
   {
     date: "04/05/2023",
-    amount: 200,
+    totalAmount: 200,
     list: [
-      { category: "Eating Out", title: "Chips", cost: 100 },
-      { category: "Eating Out", title: "Juice", cost: 100 },
+      { category: "Eating Out", title: "Chips", amount: 100 },
+      { category: "Eating Out", title: "Juice", amount: 100 },
     ],
   },
   {
     date: "05/05/2023",
-    amount: 700,
+    totalAmount: 700,
     list: [
-      { category: "Utilities", title: "Electricity Bill", cost: 700 },
+      { category: "Utilities", title: "Electricity Bill", amount: 700 },
     ],
   },
   {
     date: "06/05/2023",
-    amount: 1400,
+    totalAmount: 1400,
     list: [
-      { category: "Utilities", title: "Apartment Rent", cost: 1400 },
+      { category: "Utilities", title: "Apartment Rent", amount: 1400 },
     ],
   },
   {
     date: "07/05/2023",
-    amount: 150,
+    totalAmount: 150,
     list: [
-      { category: "Eating Out", title: "Breakfast", cost: 150 },
+      { category: "Eating Out", title: "Breakfast", amount: 150 },
     ],
   },
   {
     date: "08/05/2023",
-    amount: 550,
+    totalAmount: 550,
     list: [
-      { category: "Shopping", title: "Clothes", cost: 550 },
+      { category: "Shopping", title: "Clothes", amount: 550 },
     ],
   },
 ];
 
 const Report = () => {
-  
   const [expanded, setExpanded] = useState({});
 
   const toggleExpand = (index) => {
@@ -66,7 +65,7 @@ const Report = () => {
     }));
   };
 
-  const totalExpense = expenses.reduce((total, expense) => total + expense.amount, 0);
+  const totalExpense = expenses.reduce((total, expense) => total + expense.totalAmount, 0);
 
   return (
     <div className="bg-gray-50 flex justify-center items-center py-28">
@@ -109,7 +108,7 @@ const Report = () => {
               >
                 <span>Total Expense of {expense.date}</span>
                 <span className="font-semibold text-[#406EA2]">
-                  {expense.amount} Tk
+                  {expense.totalAmount} Tk
                   <span className="ml-2">
                     {expanded[index] ? "▲" : "▼"}
                   </span>
@@ -125,7 +124,7 @@ const Report = () => {
                       <tr>
                         <th className="px-4 py-2">Category</th>
                         <th className="px-4 py-2">Item Name</th>
-                        <th className="px-4 py-2">Cost</th>
+                        <th className="px-4 py-2">Amount</th>
                         <th className="px-4 py-2">Update</th>
                       </tr>
                     </thead>
@@ -134,7 +133,7 @@ const Report = () => {
                         <tr key={i} className="border-b text-xs md:text-sm">
                           <td className="px-4 py-2">{detail.category}</td>
                           <td className="px-4 py-2">{detail.title}</td>
-                          <td className="px-4 py-2">{detail.cost} Tk</td>
+                          <td className="px-4 py-2">{detail.amount} Tk</td>
                           <td className="px-4 py-2">
                             <button
                               className="text-green-600 hover:underline"
@@ -148,7 +147,6 @@ const Report = () => {
                               Delete
                             </button>
                           </td>
-
                         </tr>
                       ))}
                     </tbody>
