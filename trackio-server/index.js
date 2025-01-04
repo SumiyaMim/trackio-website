@@ -41,37 +41,34 @@ async function run() {
         res.send(result);
     })
 
-    // Update an existing expense
+   // Update an existing expense
     app.patch('/expenses/:id', async (req, res) => {
         const { id } = req.params;
-        const updatedFields = req.body;
-    
+        const updatedFields = req.body;  
+
+        // Get the current time
         const currentDateTime = new Date();
-        const day = currentDateTime.getDate();
-        const month = currentDateTime.toLocaleString("default", { month: "long" });
-        const year = currentDateTime.getFullYear();
         const hours = currentDateTime.getHours();
         const minutes = currentDateTime.getMinutes();
         const suffix = hours >= 12 ? "PM" : "AM";
-        const formattedDate = `${month} ${day}, ${year} ${
-          hours > 12 ? hours - 12 : hours
-        }:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
-    
+        const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+        const formattedTime = `${hours12}:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
+
+        // Prepare updated data with new time
         const updatedData = {
             ...updatedFields,
-            date: formattedDate,
+            time: formattedTime, 
         };
-    
-        // Update the expense
+
+        // Update the expense in the database
         const result = await expenseCollection.updateOne(
             { _id: new ObjectId(id) },
             { $set: updatedData }
         );
-    
+
         res.send(result);
     });
     
-  
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
