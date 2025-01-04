@@ -2,25 +2,27 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Expense = () => {
-  const [currentDateTime, setCurrentDateTime] = useState("");
+  const [currentDate, setCurrentDate] = useState(""); 
+  const [currentTime, setCurrentTime] = useState("");
   const [expenses, setExpenses] = useState([]);
 
-  // Set current date and time on component load
+  // Set current date and time
   useEffect(() => {
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.toLocaleString("default", { month: "long" });
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+    const currentDateTime = new Date();
+    const day = currentDateTime.getDate();
+    const month = currentDateTime.toLocaleString("default", { month: "long" });
+    const year = currentDateTime.getFullYear();
+    const hours = currentDateTime.getHours();
+    const minutes = currentDateTime.getMinutes();
     const suffix = hours >= 12 ? "PM" : "AM";
-    const formattedTime = `${month} ${day}, ${year} ${
-      hours > 12 ? hours - 12 : hours
-    }:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
-    setCurrentDateTime(formattedTime);
+    const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedDate = `${month} ${day}, ${year}`;
+    setCurrentDate(formattedDate);
+    const formattedTime = `${hours12}:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
+    setCurrentTime(formattedTime);
   }, []);
 
-  // Handle expenses
+  // Handle Expenses
   const handleExpenses = async (e) => {
     e.preventDefault();
   
@@ -40,32 +42,39 @@ const Expense = () => {
   
     // Prepare data to send to the server
     const expenseData = {
-      date: currentDateTime,
+      date: currentDate,  
+      time: currentTime, 
       totalAmount: newTotalAmount,
       list: updatedExpenses,
     };
   
     form.reset();
-    // window.location.reload();
-      
-    // Check if an expense already exists for the current date
+  
+    // Fetch expenses from the server
     const response = await axios.get("http://localhost:5000/expenses");
-    const existingExpense = response.data.find((expense) => expense.date.split(" ")[0] === currentDateTime.split(" ")[0]);
-
+    
+    // Find the existing expense for the current date 
+    const existingExpense = response.data.find(
+      (expense) => expense.date === currentDate 
+    );
+  
+  
     if (existingExpense) {
       // If an expense exists, update it with the new expense data
       const updatedExpense = {
         totalAmount: existingExpense.totalAmount + amount,
         list: [...existingExpense.list, newExpense],
       };
-
+  
       await axios.patch(`http://localhost:5000/expenses/${existingExpense._id}`, updatedExpense);
-      window.location.reload();
+      console.log("Expense Updated:", updatedExpense);
     } else {
       // If no expense exists for the current date, create a new record
       await axios.post("http://localhost:5000/expenses", expenseData);
+      console.log("New Expense Created:", expenseData);
     }
   };
+  
 
   return (
     <div className="max-w-7xl mx-auto py-28 px-5 md:px-10">
@@ -86,6 +95,7 @@ const Expense = () => {
             </button>
           </div>
         </div>
+
         {/* Input Section */}
         <div className="w-full lg:w-1/2 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] p-10 md:p-16 lg:p-14 rounded-md">
           <h4 className="text-center text-xl font-bold mb-14 text-[#406EA2]">Expense Record</h4>
@@ -104,6 +114,7 @@ const Expense = () => {
                 Title
               </label>
             </div>
+
             <div className="relative z-10 mb-8">
               <select
                 id="category"
@@ -132,11 +143,12 @@ const Expense = () => {
                 Category
               </label>
             </div>
+
             <div className="relative z-10 mb-8">
               <input
                 id="date"
                 type="text"
-                value={currentDateTime}
+                value={`${currentDate} ${currentTime}`}  // Display both date and time
                 className="w-full peer block appearance-none border-0 border-b-2 border-b-[#cccccc] border-gray-700 bg-transparent px-0 py-3 text-sm text-gray-700 font-medium focus:border-[#406EA2] focus:outline-none focus:ring-0"
                 placeholder=" "
                 readOnly
@@ -148,6 +160,7 @@ const Expense = () => {
                 Incurred on
               </label>
             </div>
+
             <div className="relative z-10 mb-14">
               <input
                 id="amount"
@@ -162,6 +175,7 @@ const Expense = () => {
                 Amount &nbsp;<span className="text-xs">(TK.)</span>
               </label>
             </div>
+
             <div className="flex items-center justify-between">
               <button
                 type="submit"
