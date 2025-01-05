@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Expense = () => {
-  
+
   const [currentDate, setCurrentDate] = useState(""); 
   const [currentTime, setCurrentTime] = useState("");
   const [expenses, setExpenses] = useState([]);
@@ -68,14 +68,19 @@ const Expense = () => {
       };
   
       await axios.patch(`http://localhost:5000/expenses/${existingExpense._id}`, updatedExpense);
-      console.log("Expense Updated:", updatedExpense);
+      window.location.reload(); 
     } else {
       // If no expense exists for the current date, create a new record
       await axios.post("http://localhost:5000/expenses", expenseData);
-      console.log("New Expense Created:", expenseData);
+      window.location.reload(); 
     }
   };
   
+  const handleCancel = (e) => {
+    const form = e.target.form;
+    form.reset();
+    window.location.reload(); 
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-28 px-5 md:px-10">
@@ -186,6 +191,7 @@ const Expense = () => {
               </button>
               <button
                 type="button"
+                onClick={handleCancel}
                 className="bg-[#ececec] text-base font-semibold px-5 py-2 rounded hover:bg-[#e5e5e5]"
               >
                 Cancel

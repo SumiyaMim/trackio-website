@@ -1,62 +1,31 @@
-import { useState } from "react";
-
-const expenses = [
-  {
-    date: "02/05/2023",
-    totalAmount: 250,
-    list: [
-      { category: "Eating Out", title: "Lunch", amount: 150 },
-      { category: "Commute", title: "Bus Fare", amount: 100 },
-    ],
-  },
-  {
-    date: "03/05/2023",
-    totalAmount: 850,
-    list: [
-      { category: "Groceries", title: "Vegetables", amount: 400 },
-      { category: "Health Care", title: "Medicine", amount: 450 },
-    ],
-  },
-  {
-    date: "04/05/2023",
-    totalAmount: 200,
-    list: [
-      { category: "Eating Out", title: "Chips", amount: 100 },
-      { category: "Eating Out", title: "Juice", amount: 100 },
-    ],
-  },
-  {
-    date: "05/05/2023",
-    totalAmount: 700,
-    list: [
-      { category: "Utilities", title: "Electricity Bill", amount: 700 },
-    ],
-  },
-  {
-    date: "06/05/2023",
-    totalAmount: 1400,
-    list: [
-      { category: "Utilities", title: "Apartment Rent", amount: 1400 },
-    ],
-  },
-  {
-    date: "07/05/2023",
-    totalAmount: 150,
-    list: [
-      { category: "Eating Out", title: "Breakfast", amount: 150 },
-    ],
-  },
-  {
-    date: "08/05/2023",
-    totalAmount: 550,
-    list: [
-      { category: "Shopping", title: "Clothes", amount: 550 },
-    ],
-  },
-];
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Report = () => {
   const [expanded, setExpanded] = useState({});
+  const [expenses, setExpenses] = useState([]);
+
+  // Format server date to DD/MM/YYYY
+  const formatDate = (serverDate) => {
+    const date = new Date(serverDate);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`; 
+  };
+
+  // Get expenses from server
+  useEffect(() => {
+    axios.get("http://localhost:5000/expenses")
+      .then((response) => {
+        // Format the date for each expense
+        const formattedExpenses = response.data.map((expense) => ({
+          ...expense,
+          date: formatDate(expense.date),
+        }));
+        setExpenses(formattedExpenses);
+      });
+  }, []);
 
   const toggleExpand = (index) => {
     setExpanded((prev) => ({
