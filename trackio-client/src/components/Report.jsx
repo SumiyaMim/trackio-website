@@ -2,8 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const Report = () => {
+  
   const [expanded, setExpanded] = useState({});
   const [expenses, setExpenses] = useState([]);
+  const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   // Format server date to DD/MM/YYYY
   const formatDate = (serverDate) => {
@@ -24,6 +28,7 @@ const Report = () => {
           date: formatDate(expense.date),
         }));
         setExpenses(formattedExpenses);
+        setFilteredExpenses(formattedExpenses); 
       });
   }, []);
 
@@ -34,7 +39,21 @@ const Report = () => {
     }));
   };
 
-  const totalExpense = expenses.reduce((total, expense) => total + expense.totalAmount, 0);
+  const totalExpense = filteredExpenses.reduce((total, expense) => total + expense.totalAmount, 0);
+
+  // Handle filter based on date
+  const handleFilter = () => {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+
+    // Filter expenses based on the date range
+    const filtered = expenses.filter((expense) => {
+      const expenseDate = new Date(expense.date.split('/').reverse().join('-'));
+      return expenseDate >= from && expenseDate <= to;
+    });
+
+    setFilteredExpenses(filtered);
+  };
 
   return (
     <div className="bg-gray-50 flex justify-center items-center py-28">
@@ -49,6 +68,8 @@ const Report = () => {
               type="date"
               id="from"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
           <div>
@@ -59,14 +80,19 @@ const Report = () => {
               type="date"
               id="to"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
             />
           </div>
-          <button className="mt-6 bg-[#406EA2] text-white px-4 py-2 rounded-md hover:bg-[#366294]">
+          <button 
+            onClick={handleFilter} 
+            className="mt-6 bg-[#406EA2] text-white px-4 py-2 rounded-md hover:bg-[#366294]"
+          >
             GO
           </button>
         </div>
         <div className="space-y-2">
-          {expenses.map((expense, index) => (
+          {filteredExpenses.map((expense, index) => (
             <div
               key={index}
               className="border border-[#406EA2] rounded-md p-4 shadow-sm"
@@ -108,8 +134,7 @@ const Report = () => {
                               className="text-green-600 hover:underline"
                             >
                               Edit
-                            </button>{" "}
-                            |{" "}
+                            </button>{" "}|{" "}
                             <button
                               className="text-red-600 hover:underline"
                             >
