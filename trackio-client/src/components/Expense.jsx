@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';  
 
 const Expense = () => {
 
@@ -32,7 +33,7 @@ const Expense = () => {
     const category = form.category.value;
     const amount = parseFloat(form.amount.value);
   
-    const newExpense = { category, title, amount };
+    const newExpense = { _id: uuidv4(), category, title, amount };
   
     // Calculate total amount for the new expense
     const newTotalAmount = expenses.reduce((total, item) => total + item.amount, 0) + amount;
