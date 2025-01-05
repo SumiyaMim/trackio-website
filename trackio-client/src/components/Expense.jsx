@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Expense = () => {
+  
   const [currentDate, setCurrentDate] = useState(""); 
   const [currentTime, setCurrentTime] = useState("");
   const [expenses, setExpenses] = useState([]);
