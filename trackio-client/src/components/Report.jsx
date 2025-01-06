@@ -75,6 +75,13 @@ const Report = () => {
       ...expense,
       list: expense.list.filter((item) => item._id !== id),
     }));
+
+    const isListEmpty = updatedExpenses.some((expense) => expense.list.length === 0);
+    
+    if (isListEmpty) {
+      window.location.reload();
+      return;
+    }
   
     // Recalculate totalAmount for each expense after deletion
     const updatedFilteredExpenses = updatedExpenses.map((expense) => ({
