@@ -65,7 +65,7 @@ const ExpenseBarChart = () => {
           <Bar
             dataKey="expense"
             fill="#4a90e2"
-            name="Expenses (TK)"
+            name="Expenses (Tk.)"
             barSize={50}
           />
         </BarChart>
