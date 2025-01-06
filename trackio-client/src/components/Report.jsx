@@ -8,6 +8,11 @@ const Report = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [totalExpense, setTotalExpense] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingExpense, setEditingExpense] = useState({});
+  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
 
   // Format server date to DD/MM/YYYY
   const formatDate = (serverDate) => {
@@ -45,7 +50,7 @@ const Report = () => {
     }));
   };
 
-  // Handle filter based on date
+  // Handle filter based on date range
   const handleFilter = () => {
     const from = new Date(fromDate);
     const to = new Date(toDate);
@@ -100,7 +105,24 @@ const Report = () => {
   
     setTotalExpense(total);
   };
-  
+
+  // Edit expense
+  const handleEdit = (expenseId, itemId) => {
+    // Find the item to edit
+    const expense = expenses.find(exp => exp._id === expenseId);
+    const item = expense.list.find(itm => itm._id === itemId);
+
+    // Set the editing state
+    setCategory(item.category);
+    setTitle(item.title);
+    setAmount(item.amount);
+    setEditingExpense(item);
+    setIsEditing(true);
+  };
+
+  // Update Expense
+  const handleUpdateExpense = async () => {
+  };
 
   return (
     <div className="bg-gray-50 flex justify-center items-center py-28">
@@ -138,6 +160,8 @@ const Report = () => {
             GO
           </button>
         </div>
+
+        {/* Display Expenses */}
         <div className="space-y-2">
           {filteredExpenses.map((expense, index) => (
             <div
@@ -179,9 +203,11 @@ const Report = () => {
                           <td className="px-4 py-2">
                             <button
                               className="text-green-600 hover:underline"
+                              onClick={() => handleEdit(expense._id, detail._id)}
                             >
                               Edit
-                            </button>{" "}|{" "}
+                            </button>{" "}
+                            |{" "}
                             <button
                               className="text-red-600 hover:underline"
                               onClick={() => handleDelete(detail._id)}
@@ -198,10 +224,62 @@ const Report = () => {
             </div>
           ))}
         </div>
+
+        {/* Total Expense */}
         <div className="flex justify-between items-center bg-[#6e96bf] text-white px-5 py-3 mt-4 rounded-md shadow font-semibold">
           <span>Total Expense</span>
           <span>{totalExpense} Tk</span>
         </div>
+
+        {/* Edit Modal */}
+        {isEditing && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-8 rounded-md shadow-md w-96">
+              <h3 className="text-lg font-semibold text-[#406EA2] mb-4">Edit Expense</h3>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600">Category</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600">Title</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600">Amount</label>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="bg-[#ececec] px-4 py-2 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateExpense}
+                  className="bg-[#406EA2] px-4 text-white py-2 rounded-md"
+                >
+                  Update
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

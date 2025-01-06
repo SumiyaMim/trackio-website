@@ -155,7 +155,7 @@ const Expense = () => {
               <input
                 id="date"
                 type="text"
-                value={`${currentDate} ${currentTime}`}  // Display both date and time
+                value={`${currentDate} ${currentTime}`}  
                 className="w-full peer block appearance-none border-0 border-b-2 border-b-[#cccccc] border-gray-700 bg-transparent px-0 py-3 text-sm text-gray-700 font-medium focus:border-[#406EA2] focus:outline-none focus:ring-0"
                 placeholder=" "
                 readOnly
