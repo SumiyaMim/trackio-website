@@ -1,19 +1,18 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 const PieGraph = () => {
-  const data = [
-    { name: "Utilities", value: 240 },
-    { name: "Groceries", value: 89 },
-    { name: "Eating Out", value: 53 },
-    { name: "Gardening", value: 51 },
-    { name: "Commute", value: 39 },
+  const COLORS = [
+    "#036666", "#4CAF50", "#FFD700", "#FF5733", "#A4D96C", "#3B5998", 
+    "#FF69B4", "#8A2BE2", "#FF4500", "#D2691E", "#20B2AA"
   ];
 
-  const COLORS = ["#036666", "#4CAF50", "#FFD700", "#FF5733", "#A4D96C"];
-
+  const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [expenses, setExpenses] = useState([]); // To store all expenses
+
   const [chartSize, setChartSize] = useState({
     width: 600,
     height: 600,
@@ -21,64 +20,112 @@ const PieGraph = () => {
     outerRadius: 180,
   });
 
+  // Function to aggregate expenses by category
+  const aggregateDataByCategory = (expenses) => {
+    const aggregated = {};
+
+    // Loop through each expense and sum amounts by category
+    expenses.forEach((expense) => {
+      expense.list.forEach((item) => {
+        if (aggregated[item.category]) {
+          aggregated[item.category] += item.amount;
+        } else {
+          aggregated[item.category] = item.amount;
+        }
+      });
+    });
+
+    // Convert the aggregated data into an array for PieChart
+    const aggregatedData = Object.keys(aggregated).map((category) => ({
+      name: category,
+      value: aggregated[category],
+    }));
+
+    return aggregatedData;
+  };
+
+  // Handle filter and update chart
   const handleFilter = () => {
-    console.log("Filtering data from:", startDate, "to:", endDate);
+    if (!startDate || !endDate) {
+      return; // If no date range is provided, don't filter
+    }
+
+    const fromDate = new Date(startDate);
+    const toDate = new Date(endDate);
+
+    // Filter expenses based on the date range
+    const filteredExpenses = expenses.filter((expense) => {
+      const expenseDate = new Date(expense.date.split('/').reverse().join('-'));
+      return expenseDate >= fromDate && expenseDate <= toDate;
+    });
+
+    // Aggregate filtered data by category
+    const aggregatedData = aggregateDataByCategory(filteredExpenses);
+    setData(aggregatedData);
   };
 
   useEffect(() => {
+    // Fetch the data from the server
+    axios.get("http://localhost:5000/expenses")
+      .then((response) => {
+        setExpenses(response.data);
+        const aggregated = aggregateDataByCategory(response.data);
+        setData(aggregated);
+      });
+  }, []);
+
+  // Dynamically adjust the chart size based on window size
+  useEffect(() => {
     const updateSize = () => {
       if (window.innerWidth < 640) {
-        // Small screen
         setChartSize({ width: 300, height: 400, innerRadius: 60, outerRadius: 150 });
       } else if (window.innerWidth < 1024) {
-        // Medium screen
         setChartSize({ width: 600, height: 600, innerRadius: 80, outerRadius: 180 });
       } else {
-        // Large screen
-        setChartSize({ width: 600, height: 600, innerRadius: 80, outerRadius: 180 });
+        setChartSize({ width: 600, height: 600, innerRadius: 80, outerRadius: 200 });
       }
     };
 
-    // Add resize listener
     window.addEventListener("resize", updateSize);
-    updateSize(); // Initial check
+    updateSize();
     return () => window.removeEventListener("resize", updateSize);
   }, []);
-
 
   return (
     <div className="py-28 w-full max-w-4xl mx-auto px-7 md:px-12 lg:px-0">
       <h1 className="text-xl font-bold text-[#406EA2] mb-8">Expenditures per Category:</h1>
+      
+      {/* Filter Section */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
         <div>
-            <label htmlFor="from" className="block text-sm font-medium text-gray-600">
+          <label htmlFor="from" className="block text-sm font-medium text-gray-600">
             From
-            </label>
-            <input
+          </label>
+          <input
             type="date"
             id="from"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
+          />
         </div>
         <div>
-            <label htmlFor="to" className="block text-sm font-medium text-gray-600">
+          <label htmlFor="to" className="block text-sm font-medium text-gray-600">
             To
-            </label>
-            <input
+          </label>
+          <input
             type="date"
             id="to"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
+          />
         </div>
         <button
-            onClick={handleFilter}
-            className="mt-6 bg-[#406EA2] text-white px-4 py-2 rounded-md hover:bg-[#366294]"
+          onClick={handleFilter}
+          className="mt-6 bg-[#406EA2] text-white px-4 py-2 rounded-md hover:bg-[#366294]"
         >
-            GO
+          GO
         </button>
       </div>
 
@@ -86,7 +133,7 @@ const PieGraph = () => {
       <div className="flex flex-col items-center">
         <div className="flex items-center justify-center relative">
           <div className="absolute text-center">
-            <h3 className="text-xs md:text-base font-semibold text-gray-500">Spent per Category</h3>
+            <h3 className="text-xs md:text-base font-semibold text-gray-500">Spent <br />per Category</h3>
           </div>
           <PieChart width={chartSize.width} height={chartSize.height}>
             <Pie
@@ -114,7 +161,7 @@ const PieGraph = () => {
                     fontSize="12"
                     fontWeight="bold"
                   >
-                    {`${data[index].name}: $${data[index].value}`}
+                    {`${data[index].name}: TK ${data[index].value}`}
                   </text>
                 );
               }}
