@@ -2,12 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const Report = () => {
-  
   const [expanded, setExpanded] = useState({});
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [totalExpense, setTotalExpense] = useState(0);
 
   // Format server date to DD/MM/YYYY
   const formatDate = (serverDate) => {
@@ -15,7 +15,7 @@ const Report = () => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`; 
+    return `${day}/${month}/${year}`;
   };
 
   // Get expenses from server
@@ -28,7 +28,13 @@ const Report = () => {
           date: formatDate(expense.date),
         }));
         setExpenses(formattedExpenses);
-        setFilteredExpenses(formattedExpenses); 
+        setFilteredExpenses(formattedExpenses);
+        // Calculate the total expense when expenses are fetched
+        const total = formattedExpenses.reduce(
+          (total, expense) => total + expense.totalAmount,
+          0
+        );
+        setTotalExpense(total);
       });
   }, []);
 
@@ -38,8 +44,6 @@ const Report = () => {
       [index]: !prev[index],
     }));
   };
-
-  const totalExpense = filteredExpenses.reduce((total, expense) => total + expense.totalAmount, 0);
 
   // Handle filter based on date
   const handleFilter = () => {
@@ -53,7 +57,43 @@ const Report = () => {
     });
 
     setFilteredExpenses(filtered);
+
+    // Recalculate the total expense after filtering
+    const total = filtered.reduce(
+      (total, expense) => total + expense.totalAmount,
+      0
+    );
+    setTotalExpense(total);
   };
+
+  // Delete expense
+  const handleDelete = async (id) => {
+    await axios.delete(`http://localhost:5000/expenses/${id}`);
+  
+    // Update expenses list by removing the deleted item from the expense
+    const updatedExpenses = expenses.map((expense) => ({
+      ...expense,
+      list: expense.list.filter((item) => item._id !== id),
+    }));
+  
+    // Recalculate totalAmount for each expense after deletion
+    const updatedFilteredExpenses = updatedExpenses.map((expense) => ({
+      ...expense,
+      totalAmount: expense.list.reduce((total, item) => total + item.amount, 0),
+    }));
+  
+    setExpenses(updatedExpenses);
+    setFilteredExpenses(updatedFilteredExpenses);
+  
+    // Recalculate the totalExpense after filtering and deletion
+    const total = updatedFilteredExpenses.reduce(
+      (total, expense) => total + expense.totalAmount,
+      0
+    );
+  
+    setTotalExpense(total);
+  };
+  
 
   return (
     <div className="bg-gray-50 flex justify-center items-center py-28">
@@ -98,7 +138,7 @@ const Report = () => {
               className="border border-[#406EA2] rounded-md p-4 shadow-sm"
             >
               <div
-                className="flex justify-between items-center cursor-pointer"
+                className="flex justify-between items-center cursor-pointer gap-4"
                 onClick={() => toggleExpand(index)}
               >
                 <span>Total Expense of {expense.date}</span>
@@ -137,6 +177,7 @@ const Report = () => {
                             </button>{" "}|{" "}
                             <button
                               className="text-red-600 hover:underline"
+                              onClick={() => handleDelete(detail._id)}
                             >
                               Delete
                             </button>
