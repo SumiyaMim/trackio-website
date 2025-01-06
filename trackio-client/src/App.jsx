@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar"
 import Expense from "./components/Expense"
 import Report from "./components/Report"
 import PieGraph from "./components/PieGraph"
+import ExpenseBarChart from "./components/ExpenseBarChart"
 
 function App() {
 
@@ -11,6 +12,7 @@ function App() {
       <Expense/>
       <Report/>
       <PieGraph/>
+      <ExpenseBarChart/>
     </>
   )
 }
