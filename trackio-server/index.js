@@ -79,24 +79,33 @@ async function run() {
         return res.status(404).send({ message: 'Expense not found' });
       }
     
-      const result = await expenseCollection.updateOne(
-        { "list._id": id },
+      // Remove the specific item from the list
+      const updatedResult = await expenseCollection.updateOne(
+        { _id: expense._id },
         { $pull: { list: { _id: id } } }
       );
     
-      // After deleting the item, recalculate the total amount for the expense
       const updatedExpense = await expenseCollection.findOne({ _id: expense._id });
     
-      const updatedTotalAmount = updatedExpense.list.reduce((total, item) => total + item.amount, 0);
+      // Check if the list is empty
+      if (updatedExpense.list.length === 0) {
+        await expenseCollection.deleteOne({ _id: expense._id });
+        return res.send({ message: "Expense deleted as the list is now empty" });
+      }
     
-      // Update the total amount for the expense
+      // Recalculate the total amount after deletion
+      const updatedTotalAmount = updatedExpense.list.reduce(
+        (total, item) => total + item.amount,
+        0
+      );
+    
       await expenseCollection.updateOne(
-        { _id: expense._id },
+        { _id: updatedExpense._id },
         { $set: { totalAmount: updatedTotalAmount } }
       );
     
-      res.send(result);
-    });    
+      res.send(updatedResult);
+    });      
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
