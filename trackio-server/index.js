@@ -41,7 +41,7 @@ async function run() {
         res.send(result);
     })
 
-   // Update an existing expense
+    // Update an existing expense
     app.patch('/expenses/:id', async (req, res) => {
         const { id } = req.params;
         const updatedFields = req.body;  
@@ -105,7 +105,7 @@ async function run() {
       );
     
       res.send(updatedResult);
-    });      
+    });    
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
