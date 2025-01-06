@@ -179,7 +179,7 @@ const Expense = () => {
                 htmlFor="amount"
                 className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-base font-medium text-gray-600 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-[#406EA2]"
               >
-                Amount &nbsp;<span className="text-xs">(TK.)</span>
+                Amount &nbsp;<span className="text-xs">(Tk.)</span>
               </label>
             </div>
 
