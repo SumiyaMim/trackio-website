@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const expenseCollection = client.db('TrackioDB').collection('expenses');
+    const forecastCollection = client.db('TrackioDB').collection('forecast');
 
     // Get expenses
     app.get('/expenses', async (req, res) => {
@@ -105,7 +106,14 @@ async function run() {
       );
     
       res.send(updatedResult);
-    });    
+    });   
+    
+    // Get forecast
+    app.get('/forecast', async (req, res) => {
+      const cursor = forecastCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })  
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
