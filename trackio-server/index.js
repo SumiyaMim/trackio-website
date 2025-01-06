@@ -69,6 +69,35 @@ async function run() {
         res.send(result);
     });
     
+    // Delete expense list
+    app.delete('/expenses/:id', async (req, res) => {
+      const { id } = req.params;
+    
+      const expense = await expenseCollection.findOne({ "list._id": id });
+    
+      if (!expense) {
+        return res.status(404).send({ message: 'Expense not found' });
+      }
+    
+      const result = await expenseCollection.updateOne(
+        { "list._id": id },
+        { $pull: { list: { _id: id } } }
+      );
+    
+      // After deleting the item, recalculate the total amount for the expense
+      const updatedExpense = await expenseCollection.findOne({ _id: expense._id });
+    
+      const updatedTotalAmount = updatedExpense.list.reduce((total, item) => total + item.amount, 0);
+    
+      // Update the total amount for the expense
+      await expenseCollection.updateOne(
+        { _id: expense._id },
+        { $set: { totalAmount: updatedTotalAmount } }
+      );
+    
+      res.send(result);
+    });    
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
