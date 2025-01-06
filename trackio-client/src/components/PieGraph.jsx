@@ -161,7 +161,7 @@ const PieGraph = () => {
                     fontSize="12"
                     fontWeight="bold"
                   >
-                    {`${data[index].name}: TK ${data[index].value}`}
+                    {`${data[index].name}: Tk ${data[index].value}`}
                   </text>
                 );
               }}
