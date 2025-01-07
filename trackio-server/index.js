@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
@@ -43,32 +43,52 @@ async function run() {
     })
 
     // Update an existing expense
-    app.patch('/expenses/:id', async (req, res) => {
-        const { id } = req.params;
-        const updatedFields = req.body;  
+   // Update an existing expense and totalAmount
+app.patch('/expenses/:id', async (req, res) => {
+  const { id } = req.params;
+  const updatedFields = req.body;
 
-        // Get the current time
-        const currentDateTime = new Date();
-        const hours = currentDateTime.getHours();
-        const minutes = currentDateTime.getMinutes();
-        const suffix = hours >= 12 ? "PM" : "AM";
-        const hours12 = hours % 12 === 0 ? 12 : hours % 12;
-        const formattedTime = `${hours12}:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
+  // Get the current time
+  const currentDateTime = new Date();
+  const hours = currentDateTime.getHours();
+  const minutes = currentDateTime.getMinutes();
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+  const formattedTime = `${hours12}:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
 
-        // Prepare updated data with new time
-        const updatedData = {
-            ...updatedFields,
-            time: formattedTime, 
-        };
+  // Prepare updated data with new time
+  const updatedData = {
+      ...updatedFields,
+      time: formattedTime,
+  };
 
-        // Update the expense in the database
-        const result = await expenseCollection.updateOne(
-            { _id: new ObjectId(id) },
-            { $set: updatedData }
-        );
+  // Update the expense in the database
+  const result = await expenseCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
+  );
 
-        res.send(result);
-    });
+  // Recalculate totalAmount after updating the individual item
+  const expense = await expenseCollection.findOne({ _id: new ObjectId(id) });
+
+  const updatedTotalAmount = expense.list.reduce(
+      (total, item) => total + item.amount,
+      0
+  );
+
+  // Update the totalAmount in the database
+  await expenseCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { totalAmount: updatedTotalAmount } }
+  );
+
+  res.send({
+      message: 'Expense updated successfully',
+      updatedData,
+      totalAmount: updatedTotalAmount,
+  });
+});
+
     
     // Delete expense list
     app.delete('/expenses/:id', async (req, res) => {
@@ -107,6 +127,29 @@ async function run() {
     
       res.send(updatedResult);
     });   
+
+    // Update expense lists
+    app.put('/expenses/:expenseId/list/:listId', async (req, res) => {
+      const { expenseId, listId } = req.params;
+      const { category, title, amount } = req.body;
+  
+      const amountNumber = parseFloat(amount);
+    
+      const expense = await expenseCollection.findOne({ _id: new ObjectId(expenseId) });
+    
+      const item = expense.list.find(item => item._id.toString() === listId);
+    
+      item.category = category;
+      item.title = title;
+      item.amount = amountNumber;
+    
+      await expenseCollection.updateOne(
+        { _id: new ObjectId(expenseId) },
+        { $set: { list: expense.list } }
+      );
+    
+      res.status(200).json(item); 
+    });
     
     // Get forecast
     app.get('/forecast', async (req, res) => {
