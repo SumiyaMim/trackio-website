@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const ExpenseBarChart = () => {
+  
   const [data, setData] = useState([]);
 
   // Format the date as day/month
