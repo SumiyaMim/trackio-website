@@ -26,7 +26,7 @@ const Report = () => {
 
   // Get expenses from server
   useEffect(() => {
-    axios.get("http://localhost:5001/expenses")
+    axios.get("https://trackio-server.vercel.app/expenses")
       .then((response) => {
         // Format the date for each expense
         const formattedExpenses = response.data.map((expense) => ({

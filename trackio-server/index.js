@@ -9,7 +9,6 @@ const port = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-
 // Database Connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xzggogk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -42,54 +41,52 @@ async function run() {
         res.send(result);
     })
 
-    // Update an existing expense
-   // Update an existing expense and totalAmount
-app.patch('/expenses/:id', async (req, res) => {
-  const { id } = req.params;
-  const updatedFields = req.body;
+    // Update an existing expense and totalAmount
+    app.patch('/expenses/:id', async (req, res) => {
+      const { id } = req.params;
+      const updatedFields = req.body;
 
-  // Get the current time
-  const currentDateTime = new Date();
-  const hours = currentDateTime.getHours();
-  const minutes = currentDateTime.getMinutes();
-  const suffix = hours >= 12 ? "PM" : "AM";
-  const hours12 = hours % 12 === 0 ? 12 : hours % 12;
-  const formattedTime = `${hours12}:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
+      // Get the current time
+      const currentDateTime = new Date();
+      const hours = currentDateTime.getHours();
+      const minutes = currentDateTime.getMinutes();
+      const suffix = hours >= 12 ? "PM" : "AM";
+      const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+      const formattedTime = `${hours12}:${minutes < 10 ? "0" + minutes : minutes} ${suffix}`;
 
-  // Prepare updated data with new time
-  const updatedData = {
-      ...updatedFields,
-      time: formattedTime,
-  };
+      // Prepare updated data with new time
+      const updatedData = {
+          ...updatedFields,
+          time: formattedTime,
+      };
 
-  // Update the expense in the database
-  const result = await expenseCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updatedData }
-  );
+      // Update the expense in the database
+      const result = await expenseCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updatedData }
+      );
 
-  // Recalculate totalAmount after updating the individual item
-  const expense = await expenseCollection.findOne({ _id: new ObjectId(id) });
+      // Recalculate totalAmount after updating the individual item
+      const expense = await expenseCollection.findOne({ _id: new ObjectId(id) });
 
-  const updatedTotalAmount = expense.list.reduce(
-      (total, item) => total + item.amount,
-      0
-  );
+      const updatedTotalAmount = expense.list.reduce(
+          (total, item) => total + item.amount,
+          0
+      );
 
-  // Update the totalAmount in the database
-  await expenseCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { totalAmount: updatedTotalAmount } }
-  );
+      // Update the totalAmount in the database
+      await expenseCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: { totalAmount: updatedTotalAmount } }
+      );
 
-  res.send({
-      message: 'Expense updated successfully',
-      updatedData,
-      totalAmount: updatedTotalAmount,
-  });
-});
+      res.send({
+          message: 'Expense updated successfully',
+          updatedData,
+          totalAmount: updatedTotalAmount,
+      });
+    });
 
-    
     // Delete expense list
     app.delete('/expenses/:id', async (req, res) => {
       const { id } = req.params;
