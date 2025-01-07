@@ -113,6 +113,7 @@ const Expense = () => {
                 type="text"
                 className="w-full peer block appearance-none border-0 border-b-2 border-b-[#cccccc] border-gray-700 bg-transparent px-0 py-3 text-sm text-gray-700 font-medium focus:border-[#406EA2] focus:outline-none focus:ring-0"
                 placeholder=" "
+                required
               />
               <label
                 htmlFor="title"
@@ -127,6 +128,7 @@ const Expense = () => {
                 id="category"
                 className="w-full peer block appearance-none border-0 border-b-2 border-b-[#cccccc] border-gray-700 bg-transparent px-0 py-3 text-sm text-gray-700 font-medium focus:border-[#406EA2] focus:outline-none focus:ring-0"
                 defaultValue=""
+                required
               >
                 <option value="" disabled hidden>
                   Select Category
@@ -174,6 +176,7 @@ const Expense = () => {
                 type="number"
                 className="w-full peer block appearance-none border-0 border-b-2 border-b-[#cccccc] border-gray-700 bg-transparent px-0 py-3 text-sm text-gray-700 font-medium focus:border-[#406EA2] focus:outline-none focus:ring-0"
                 placeholder=" "
+                required
               />
               <label
                 htmlFor="amount"
