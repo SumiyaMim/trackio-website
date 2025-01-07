@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const expenseCollection = client.db('TrackioDB').collection('expenses');
     const forecastCollection = client.db('TrackioDB').collection('forecast');
@@ -158,8 +158,8 @@ app.patch('/expenses/:id', async (req, res) => {
       res.send(result);
     })  
 
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // await client.close();
   }
