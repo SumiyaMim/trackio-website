@@ -6,7 +6,6 @@ Trackio is an Expense Tracking Application designed to monitor daily expenditure
 
 
 **Technology:**  
-
 - React
 - Tailwind CSS
 - Express
