@@ -16,7 +16,7 @@ const ExpenseBarChart = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/forecast")
+      .get("http://localhost:5001/forecast")
       .then((response) => {
         const forecastData = response.data;
 

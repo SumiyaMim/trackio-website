@@ -66,7 +66,7 @@ const PieGraph = () => {
 
   useEffect(() => {
     // Fetch the data from the server
-    axios.get("http://localhost:5000/expenses")
+    axios.get("http://localhost:5001/expenses")
       .then((response) => {
         setExpenses(response.data);
         const aggregated = aggregateDataByCategory(response.data);

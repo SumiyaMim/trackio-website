@@ -25,7 +25,7 @@ const Report = () => {
 
   // Get expenses from server
   useEffect(() => {
-    axios.get("http://localhost:5000/expenses")
+    axios.get("http://localhost:5001/expenses")
       .then((response) => {
         // Format the date for each expense
         const formattedExpenses = response.data.map((expense) => ({
@@ -73,7 +73,7 @@ const Report = () => {
 
   // Delete expense
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/expenses/${id}`);
+    await axios.delete(`http://localhost:5001/expenses/${id}`);
   
     // Update expenses list by removing the deleted item from the expense
     const updatedExpenses = expenses.map((expense) => ({
@@ -107,22 +107,78 @@ const Report = () => {
   };
 
   // Edit expense
-  const handleEdit = (expenseId, itemId) => {
-    // Find the item to edit
-    const expense = expenses.find(exp => exp._id === expenseId);
-    const item = expense.list.find(itm => itm._id === itemId);
-
-    // Set the editing state
+  const handleEdit = (expenseId, listId) => {
+    // Find the expense and item to edit
+    const expense = expenses.find((exp) => exp._id === expenseId);
+    const item = expense.list.find((it) => it._id === listId);
+  
+    // Set the state for editing
     setCategory(item.category);
     setTitle(item.title);
     setAmount(item.amount);
-    setEditingExpense(item);
+    setEditingExpense({ expenseId, _id: listId }); 
     setIsEditing(true);
   };
-
-  // Update Expense
+  
+  // Update expense
   const handleUpdateExpense = async () => {
+    const updatedExpense = {
+        category,
+        title,
+        amount,
+    };
+
+    // Update the expense lists
+    await axios.put(
+        `http://localhost:5001/expenses/${editingExpense.expenseId}/list/${editingExpense._id}`,
+        updatedExpense
+    );
+
+    // Update the local state for the updated expense list
+    const updatedExpenses = expenses.map((expense) => {
+        if (expense._id === editingExpense.expenseId) {
+            const updatedList = expense.list.map((item) =>
+                item._id === editingExpense._id
+                    ? { ...item, category, title, amount }
+                    : item
+            );
+            return { ...expense, list: updatedList };
+        }
+        return expense;
+    });
+
+    setExpenses(updatedExpenses);
+    setFilteredExpenses(updatedExpenses);
+
+    // Recalculate the totalAmount for the specific expense
+    const updatedExpenseObj = updatedExpenses.find(
+        (expense) => expense._id === editingExpense.expenseId
+    );
+
+    const updatedTotalAmount = updatedExpenseObj.list.reduce(
+        (total, item) => total + item.amount,
+        0
+    );
+
+    // Update the totalAmount
+    await axios.patch(
+        `http://localhost:5001/expenses/${editingExpense.expenseId}`,
+        { totalAmount: updatedTotalAmount }
+    );
+
+    // Recalculate the totalExpense for all expenses
+    const total = updatedExpenses.reduce(
+        (total, expense) => total + expense.totalAmount,
+        0
+    );
+    setTotalExpense(total);
+
+    window.location.reload();
+
+    // Close the modal after update
+    setIsEditing(false);
   };
+
 
   return (
     <div className="bg-gray-50 flex justify-center items-center py-28">
@@ -238,12 +294,26 @@ const Report = () => {
               <h3 className="text-lg font-semibold text-[#406EA2] mb-4">Edit Expense</h3>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600">Category</label>
-                <input
-                  type="text"
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                />
+                >
+                  <option value="" disabled hidden>
+                    Select Category
+                  </option>
+                  <option value="Commute">Commute</option>
+                  <option value="Eating Out">Eating Out</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Gardening">Gardening</option>
+                  <option value="Groceries">Groceries</option>
+                  <option value="Health Care">Health Care</option>
+                  <option value="Travel">Travel</option>
+                  <option value="Utilities">Utilities</option>
+                  <option value="Education">Education</option>
+                  <option value="Shopping">Shopping</option>
+                  <option value="Subscriptions">Subscriptions</option>
+                </select>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600">Title</label>
