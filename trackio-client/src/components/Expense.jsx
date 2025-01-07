@@ -53,7 +53,7 @@ const Expense = () => {
     form.reset();
   
     // Fetch expenses from the server
-    const response = await axios.get("http://localhost:5001/expenses");
+    const response = await axios.get("https://trackio-server.vercel.app/expenses");
     
     // Find the existing expense for the current date 
     const existingExpense = response.data.find(
@@ -68,11 +68,11 @@ const Expense = () => {
         list: [...existingExpense.list, newExpense],
       };
   
-      await axios.patch(`http://localhost:5001/expenses/${existingExpense._id}`, updatedExpense);
+      await axios.patch(`https://trackio-server.vercel.app/expenses/${existingExpense._id}`, updatedExpense);
       window.location.reload(); 
     } else {
       // If no expense exists for the current date, create a new record
-      await axios.post("http://localhost:5001/expenses", expenseData);
+      await axios.post("https://trackio-server.vercel.app/expenses", expenseData);
       window.location.reload(); 
     }
   };

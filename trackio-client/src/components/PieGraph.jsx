@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 const PieGraph = () => {
-  
+
   const COLORS = [
     "#036666", "#4CAF50", "#FFD700", "#FF5733", "#A4D96C", "#3B5998", 
     "#FF69B4", "#8A2BE2", "#FF4500", "#D2691E", "#20B2AA"
@@ -67,7 +67,7 @@ const PieGraph = () => {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:5001/expenses")
+    axios.get("https://trackio-server.vercel.app/expenses")
       .then((response) => {
         setExpenses(response.data);
         const aggregated = aggregateDataByCategory(response.data);

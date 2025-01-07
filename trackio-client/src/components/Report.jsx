@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const Report = () => {
-  
+
   const [expanded, setExpanded] = useState({});
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
@@ -74,7 +74,7 @@ const Report = () => {
 
   // Delete expense
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5001/expenses/${id}`);
+    await axios.delete(`https://trackio-server.vercel.app/expenses/${id}`);
   
     // Update expenses list by removing the deleted item from the expense
     const updatedExpenses = expenses.map((expense) => ({
@@ -131,7 +131,7 @@ const Report = () => {
 
     // Update the expense lists
     await axios.put(
-        `http://localhost:5001/expenses/${editingExpense.expenseId}/list/${editingExpense._id}`,
+        `https://trackio-server.vercel.app/expenses/${editingExpense.expenseId}/list/${editingExpense._id}`,
         updatedExpense
     );
 
@@ -163,7 +163,7 @@ const Report = () => {
 
     // Update the totalAmount
     await axios.patch(
-        `http://localhost:5001/expenses/${editingExpense.expenseId}`,
+        `https://trackio-server.vercel.app/expenses/${editingExpense.expenseId}`,
         { totalAmount: updatedTotalAmount }
     );
 
