@@ -11,7 +11,7 @@ const PieGraph = () => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [expenses, setExpenses] = useState([]); // To store all expenses
+  const [expenses, setExpenses] = useState([]); 
 
   const [chartSize, setChartSize] = useState({
     width: 600,
@@ -46,8 +46,9 @@ const PieGraph = () => {
 
   // Handle filter and update chart
   const handleFilter = () => {
+    // If no date range is provided, don't filter
     if (!startDate || !endDate) {
-      return; // If no date range is provided, don't filter
+      return;
     }
 
     const fromDate = new Date(startDate);
@@ -65,7 +66,6 @@ const PieGraph = () => {
   };
 
   useEffect(() => {
-    // Fetch the data from the server
     axios.get("http://localhost:5001/expenses")
       .then((response) => {
         setExpenses(response.data);
